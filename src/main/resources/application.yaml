@@ -1,0 +1,33 @@
+server:
+  port: 9090
+
+spring:
+  postgresql:
+    url: jdbc:postgresql://localhost:5432/spring_batch
+    username: postgres
+    password: ${db_pass}
+    driver-class-name: "org.postgresql.Driver"
+  h2:
+    console.enabled: true
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: none
+  #      ddl-auto: update
+  batch:
+    jdbc:
+      initialize-schema: "always"
+    job:
+      enabled: false
+
+#logging:
+#  level:
+#    root: info
+#  pattern:
+#    console: "%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - correlationId=%X{correlationId} - %msg%n"
+
+GRID_SIZE: 1000
+CHUNK_SIZE: 2000
+
