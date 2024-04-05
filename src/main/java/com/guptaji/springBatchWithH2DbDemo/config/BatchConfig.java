@@ -28,6 +28,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.interceptor.TransactionAttribute;
 
 @Configuration
 public class BatchConfig {
@@ -44,9 +45,11 @@ public class BatchConfig {
   public Step logEntryTasklet(
       JobRepository jobRepository,
       PlatformTransactionManager platformTransactionManager,
-      @Qualifier("jobLogEntryTasklet") JobLogEntryTasklet jobLogEntryTasklet) {
+      @Qualifier("jobLogEntryTasklet") JobLogEntryTasklet jobLogEntryTasklet,
+      @Qualifier("transactionAttribute") TransactionAttribute transactionAttribute) {
     return new StepBuilder("JOB_ENTRY_STEP", jobRepository)
         .tasklet(jobLogEntryTasklet, platformTransactionManager)
+        .transactionAttribute(transactionAttribute)
         .build();
   }
 
@@ -59,9 +62,11 @@ public class BatchConfig {
   public Step dataCountStep(
       JobRepository jobRepository,
       PlatformTransactionManager platformTransactionManager,
-      @Qualifier("dataCountTasklet") DataCountTasklet dataCountTasklet) {
+      @Qualifier("dataCountTasklet") DataCountTasklet dataCountTasklet,
+      @Qualifier("transactionAttribute") TransactionAttribute transactionAttribute) {
     return new StepBuilder("DATA_COUNT_STEP", jobRepository)
         .tasklet(dataCountTasklet, platformTransactionManager)
+        .transactionAttribute(transactionAttribute)
         .build();
   }
 
@@ -110,13 +115,15 @@ public class BatchConfig {
       PlatformTransactionManager transactionManager,
       @Qualifier("studentOneDataReader") StudentOneDataReader studentOneDataReader,
       @Qualifier("studentOneDataProcessor") StudentOneDataProcessor studentOneDataProcessor,
-      @Qualifier("studentTwoDataWriter") StudentTwoDataWriter studentTwoDataWriter) {
+      @Qualifier("studentTwoDataWriter") StudentTwoDataWriter studentTwoDataWriter,
+      @Qualifier("transactionAttribute") TransactionAttribute transactionAttribute) {
     return new StepBuilder("STUDENT_SLAVE_STEP", jobRepository)
         .<List<StudentOne>, List<StudentTwo>>chunk(
             chunkSize, transactionManager) // just write whatever you have in itemProcessor
         .reader(studentOneDataReader)
         .processor(studentOneDataProcessor)
         .writer(studentTwoDataWriter)
+        .transactionAttribute(transactionAttribute)
         .faultTolerant()
         .retry(Exception.class)
         .retryLimit(5)
