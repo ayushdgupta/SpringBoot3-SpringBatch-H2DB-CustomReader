@@ -33,3 +33,5 @@
    1. https://docs.spring.io/spring-batch/reference/job/java-config.html
    2. https://spring.io/blog/2022/09/22/spring-batch-5-0-0-m6-and-4-3-7-are-out
    3. https://medium.com/@aryan.shinde.29/configuring-dual-data-sources-in-spring-batch-5-and-spring-boot-3-8a72bc00555c
+7. for h2-console  -- http://localhost:9090/h2-console/
+8. The default DB source for h2 is - jdbc:h2:mem:testdb
